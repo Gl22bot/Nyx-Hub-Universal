@@ -1,13 +1,30 @@
-local PlaceId = game.PlaceId
 
-if PlaceId == 2753915549 then
-    -- Blox Fruits
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Gl22bot/NyxBF/refs/heads/main/BfNYXHUB.md"))()
+-- *essa função cheira a PlaceId e decide o destino do loader*
 
-elseif PlaceId == 142823291 then
-    -- Murder Mystery 2
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Gl22bot/Mm2/refs/heads/main/README.md"))()
+local SUPPORTED_GAMES = {
+    [2753915549] = "https://raw.githubusercontent.com/Gl22bot/NyxBF/refs/heads/main/BfNYXHUB.md",
+    [142823291]  = "https://raw.githubusercontent.com/Gl22bot/Mm2/refs/heads/main/README.md",
+}
 
-else
-    warn("Nyx Hub: jogo não suportado. PlaceId: " .. tostring(PlaceId))
+local function getPlaceId()
+    return game.PlaceId
 end
+
+local function loadForCurrentGame()
+    local placeId = getPlaceId()
+    local url = SUPPORTED_GAMES[placeId]
+
+    if url then
+        local success, result = pcall(function()
+            return loadstring(game:HttpGet(url, true))()
+        end)
+
+        if not success then
+            warn("[NyxLoader] Falhou ao carregar script para PlaceId " .. tostring(placeId) .. ": " .. tostring(result))
+        end
+    else
+        print("[NyxLoader] Jogo atual (" .. tostring(placeId) .. ") não tem suporte.")
+    end
+end
+
+loadForCurrentGame()
